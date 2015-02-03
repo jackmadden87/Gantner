@@ -1,4 +1,4 @@
-__author__ = 'Jack Madden'
+__author__ = 'jackmadden87'
 
 import socket
 import struct

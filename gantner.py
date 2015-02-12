@@ -85,7 +85,7 @@ class Request(object):
 
 
 class StateRequest(Request):
-
+    """Send request for States of machine"""
     def __init__(self):
         super(StateRequest, self).__init__(command=1, length_read=65535)
 

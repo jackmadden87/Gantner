@@ -1,4 +1,4 @@
-__author__ = 'jackmadden87'
+__author__ = 'Jack Madden'
 
 import socket
 import struct
@@ -23,6 +23,7 @@ class Egate(object):
         """Initialise egate with ip address"""
         self.address = address
         self.skt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.session = Session(self.skt)
 
     def tcp_connect(self):
         """Attempt connection to TCP port 8001"""
@@ -37,14 +38,13 @@ class Egate(object):
 class Session(object):
     """Egate Request - Response handling"""
 
-    def __init__(self, skt, request=""):
+    def __init__(self, skt):
         """Initialisation"""
         self.skt = skt
-        self.request = request
 
-    def send_request(self):
+    def send_request(self, request=""):
         try:
-            self.skt.sendall(self.request)
+            self.skt.sendall(request)
         except socket.error:
             print "Unable to send request, is connection active?"
 
@@ -104,7 +104,14 @@ class ClockRequest(Request):
             return 9
         else:
             print "Unknown RealTimeClock command, using 'Read' mode"
-            return 0  # todo Handle this as an exception
+            return 0  # todo Handle this better
 
     def gen_clock(self):
         pass
+
+
+if __name__ == '__main__':
+    rqst = StateRequest()
+    e = Egate()
+    e.tcp_connect()
+    e.session.send_request(rqst.pack_frame())

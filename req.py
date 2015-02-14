@@ -54,13 +54,14 @@ class RequestGenerator(object):
                 packed_request += struct.pack(">" + fmt, data)
 
             print struct.unpack(">HbHHHH", packed_request)
+            return packed_request
 
         except AttributeError:
             RequestGenerator.print_request_format()
-        #except ValueError:
-        #    RequestGenerator.print_request_format()
+        except ValueError:
+            RequestGenerator.print_request_format()
 
-    def state_request(self, command=1, length_read=65535):
+    def request_state(self, command=1, length_read=65535):
         """Returns a dict containing the request params for a state
         Request from an egate"""
 
@@ -72,7 +73,36 @@ class RequestGenerator(object):
                    "length_read": length_read}
         return request
 
+    def request_clock(self, command=2, clk=None):
+        """Return a dict containing the request parameters for a clock
+           request from and egate. Method defaults to 'get'. To 'set'
+           the clock, pass parameters to 'clk' variable"""
+
+        if clk is None:
+            # Build a request to GET the Real Time Clock.
+
+            request = {"command": command,
+                       "offset_write": self.offset_write,
+                       "length_write": 0,
+                       "data_write": self.data_write,
+                       "offset_read": self.offset_read,
+                       "length_read": 65535}
+
+            return request
+        else:
+            # Build a request to SET the Real Time Clock
+
+            request = {"command": command,
+                       "offset_write": self.offset_write,
+                       "length_write": 9,
+                       "data_write": clk,
+                       "offset_read": self.offset_read,
+                       "length_read": 0}
+
+            return request
+
+
 if __name__ == '__main__':
 
     r = RequestGenerator()
-    r.pack(r.state_request())
+    r.pack(r.request_state())

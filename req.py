@@ -40,7 +40,7 @@ class RequestGenerator(object):
             offset_read = request.get('offset_read')
             length_read = request.get('length_read')
 
-            # get length of request
+            # get length of the data to head the request
             if data_write is None:
                 frame_length = 9
             else:
@@ -62,7 +62,7 @@ class RequestGenerator(object):
             RequestGenerator.print_request_format()
 
     def request_state(self, command=1, length_read=65535):
-        """Returns a dict containing the request params for a state
+        """Returns a dict containing the request parameters for a State
         Request from an egate"""
 
         request = {"command": command,
@@ -74,8 +74,8 @@ class RequestGenerator(object):
         return request
 
     def request_clock(self, command=2, clk=None):
-        """Return a dict containing the request parameters for a clock
-           request from and egate. Method defaults to 'get'. To 'set'
+        """Return a dict containing the request parameters for a Clock
+           Request from an egate. Method defaults to 'get'. To 'set'
            the clock, pass parameters to 'clk' variable"""
 
         if clk is None:
@@ -101,8 +101,21 @@ class RequestGenerator(object):
 
             return request
 
+    def request_diagnostics(self, command=9):
+        """Return a dict containing the request parameters for a Diagnostic
+           Request from an egate"""
+        request = {"command": command,
+                   "offset_write": self.offset_write,
+                   "length_write": self.length_write,
+                   "data_write": self.data_write,
+                   "offset_read": self.offset_read,
+                   "length_read": 65535}
+        return request
+
 
 if __name__ == '__main__':
 
     r = RequestGenerator()
     r.pack(r.request_state())
+    r.pack(r.request_diagnostics())
+    r.pack(r.request_clock())
